@@ -1,0 +1,105 @@
+/**
+ * tokens.css
+ * Design tokens centralizados para o Mural da Colação
+ * Cor base: #EDE8D0 (Beige - novo padrão)
+ */
+
+:root {
+  /* =====================
+     PALETA DE CORES
+     ===================== */
+
+  /* Cor base e variações */
+  --color-base: #ede8d0; /* Bege principal */
+  --color-base-light: #f5f1e6; /* 10% mais claro */
+  --color-base-lighter: #fdfaf4; /* 20% mais claro - para highlights */
+  --color-base-dark: #d4ccb5; /* 15% mais escuro - para sombras */
+  --color-base-darker: #b8ae95; /* 30% mais escuro - para bordas */
+
+  /* Acessórios */
+  --color-ink: #1f1f1f; /* Preto quasi */
+  --color-ink-soft: #6b6b6b; /* Cinza médio */
+  --color-ink-lighter: #a0a0a0; /* Cinza claro */
+
+  /* Sobreposições com opacidade */
+  --color-base-overlay: rgba(237, 232, 208, 0.85);
+  --color-base-overlay-strong: rgba(237, 232, 208, 0.95);
+  --color-ink-overlay: rgba(31, 31, 31, 0.15);
+  --color-ink-overlay-strong: rgba(31, 31, 31, 0.25);
+
+  /* Estados */
+  --color-success: #4caf50;
+  --color-error: #dc2626;
+  --color-error-bg: rgba(220, 38, 38, 0.1);
+
+  /* =====================
+     EFEITOS E SOMBRAS
+     ===================== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  /* =====================
+     TIPOGRAFIA
+     ===================== */
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --font-size-base: 16px;
+
+  /* =====================
+     ESPAÇAMENTO
+     ===================== */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+
+  /* =====================
+     BORDER RADIUS
+     ===================== */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* =====================
+     TRANSIÇÕES
+     ===================== */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* =====================
+     SAFE AREAS (iOS)
+     ===================== */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* =====================
+     Z-INDEX SCALE
+     ===================== */
+  --z-background: 1;
+  --z-poetry: 2;
+  --z-plane: 5;
+  --z-cta: 10;
+  --z-modal: 100;
+  --z-toast: 200;
+}
+
+/* Dark mode (se implementado no futuro) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-base: #3d3a2e;
+    --color-base-light: #4a4639;
+    --color-base-lighter: #5a5649;
+    --color-base-dark: #2d2b22;
+    --color-base-darker: #1a1915;
+
+    --color-ink: #f5f5f5;
+    --color-ink-soft: #b0b0b0;
+    --color-ink-lighter: #707070;
+  }
+}

@@ -1,0 +1,670 @@
+/**
+ * styles.css
+ * Estética ASCII premium: bege/off-white, glass sutil, minimalista
+ */
+
+/* =====================
+   TOKENS DE DESIGN
+   ===================== */
+:root {
+  /* Paleta de cores */
+  --color-background: #f4efe6;
+  --color-ink: #1f1f1f;
+  --color-ink-soft: rgba(31, 31, 31, 0.72);
+  --color-border: rgba(31, 31, 31, 0.18);
+  --color-glass: rgba(255, 255, 255, 0.35);
+  --color-glass-hover: rgba(255, 255, 255, 0.45);
+  --color-shadow: rgba(0, 0, 0, 0.12);
+  --color-overlay: rgba(31, 31, 31, 0.15);
+
+  /* Tipografia */
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* Espaçamento */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Transições */
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* =====================
+   RESET & BASE
+   ===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--color-background);
+  color: var(--color-ink);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* =====================
+   FLOATING MESSAGES (BACKGROUND)
+   ===================== */
+.floating-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-poetry, 2);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Movement: translate3d from below viewport to above viewport (GPU-composited) */
+@keyframes float-move {
+  from {
+    transform: translate3d(0, var(--y-start), 0);
+  }
+  to {
+    transform: translate3d(0, var(--y-end), 0);
+  }
+}
+
+/* Opacity: fade in (0-10%), visible (10-85%), fade out (85-100%) */
+@keyframes float-fade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- Card: outer wrapper (handles translateY animation) ---- */
+.floating-card {
+  position: absolute;
+  top: 0;
+  pointer-events: auto;
+  cursor: default;
+  will-change: transform;
+  animation: float-move var(--anim-dur) linear forwards;
+  animation-play-state: running;
+  z-index: 1;
+}
+
+/* ---- Card body: transparent in normal state (text-only look) ---- */
+.floating-card__body {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: none;
+  font-family: var(--font-mono);
+  will-change: opacity;
+  animation: float-fade var(--anim-dur) linear forwards;
+  animation-play-state: running;
+  transition:
+    transform 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+  color: rgb(10, 10, 10) !important;
+}
+
+/* ---- Text: crisp, legible via subtle text-shadow ---- */
+.floating-card__text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgb(10, 10, 10);
+  font-style: italic;
+  font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.floating-card__author {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgb(40, 40, 40);
+  font-weight: 400;
+  font-style: normal;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* ---- Focused state: glass via ::before, text stays filter-free ---- */
+.floating-card--focused {
+  animation-play-state: paused;
+  z-index: 10;
+}
+
+.floating-card--focused .floating-card__body {
+  animation-play-state: paused;
+  opacity: 1 !important;
+  transform: scale(1.04);
+  position: relative;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.floating-card--focused .floating-card__body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  z-index: -1;
+}
+
+.floating-card--focused .floating-card__text {
+  text-shadow: none;
+  color: rgba(0, 0, 0, 0.95);
+}
+
+.floating-card--focused .floating-card__author {
+  text-shadow: none;
+  color: rgba(0, 0, 0, 0.72);
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .floating-card--focused .floating-card__body::before {
+    background: rgba(244, 239, 230, 0.88);
+  }
+}
+
+/* ---- Emergency exit: freeze position + fade out ---- */
+.floating-card--exit {
+  animation-play-state: paused !important;
+  opacity: 0 !important;
+  transition: opacity 250ms ease !important;
+  pointer-events: none !important;
+  z-index: 0;
+}
+
+/* Mobile: slightly smaller text */
+@media (max-width: 767px) {
+  .floating-card__text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .floating-card__body {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .floating-card__author {
+    font-size: 0.7rem;
+  }
+}
+
+/* Reduced motion: no scale/blur on focus */
+@media (prefers-reduced-motion: reduce) {
+  .floating-card--focused .floating-card__body {
+    transform: none;
+  }
+
+  .floating-card--focused .floating-card__body::before {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .floating-card__body {
+    color: rgb(10, 10, 10) !important;
+  }
+
+  .floating-card__text {
+    color: rgb(10, 10, 10);
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.3);
+  }
+
+  .floating-card__author {
+    color: rgb(40, 40, 40);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
+  }
+
+  .floating-card--focused .floating-card__body {
+    border-color: rgba(0, 0, 0, 0.08);
+    color: rgb(10, 10, 10) !important;
+  }
+
+  .floating-card--focused .floating-card__body::before {
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .floating-card--focused .floating-card__text,
+  .floating-card--focused .floating-card__author {
+    text-shadow: none;
+    color: rgb(10, 10, 10);
+  }
+}
+
+/* =====================
+   CTA OVERLAY
+   ===================== */
+.cta-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  padding: var(--space-lg);
+}
+
+.cta-content {
+  text-align: center;
+  padding: var(--space-xl);
+  background: var(--color-glass);
+  backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px var(--color-shadow);
+  pointer-events: auto;
+  max-width: 480px;
+  width: 100%;
+}
+
+/* Fallback para navegadores sem backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+  .cta-content {
+    background: rgba(244, 239, 230, 0.92);
+  }
+}
+
+.cta-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  color: var(--color-ink);
+  line-height: 1.3;
+}
+
+.cta-subtitle {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--color-ink-soft);
+  margin-bottom: var(--space-xl);
+  line-height: 1.5;
+}
+
+.cta-button {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: var(--space-md) var(--space-xl);
+  background: var(--color-glass);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  box-shadow:
+    0 1px 3px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+  pointer-events: none;
+}
+
+.cta-button:hover,
+.cta-button:focus {
+  background: var(--color-glass-hover);
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px var(--color-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.cta-button:active {
+  transform: translateY(0);
+}
+
+.cta-button:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .cta-title {
+    font-size: 2rem;
+  }
+
+  .cta-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .cta-button {
+    font-size: 1.05rem;
+  }
+}
+
+/* =====================
+   MODAL
+   ===================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background: var(--color-overlay);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--transition-smooth),
+    visibility var(--transition-smooth);
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-container {
+  background: var(--color-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px var(--color-shadow);
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9) translateY(20px);
+  transition: transform var(--transition-bounce);
+}
+
+.modal-overlay.is-open .modal-container {
+  transform: scale(1) translateY(0);
+}
+
+@supports not (backdrop-filter: blur(16px)) {
+  .modal-container {
+    background: rgba(244, 239, 230, 0.96);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.modal-close {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  padding: var(--space-xs);
+  line-height: 1;
+  transition: color var(--transition-smooth);
+  border-radius: var(--radius-sm);
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: var(--color-ink);
+  background: rgba(31, 31, 31, 0.06);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* =====================
+   FORMULÁRIO
+   ===================== */
+.modal-form {
+  padding: var(--space-lg);
+}
+
+.form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-xs);
+}
+
+.form-required {
+  color: var(--color-ink-soft);
+}
+
+.form-input,
+.form-textarea {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  width: 100%;
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  transition: all var(--transition-smooth);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-ink);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(31, 31, 31, 0.08);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.form-counter {
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+  text-align: right;
+  margin-top: var(--space-xs);
+}
+
+.submit-button {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+  padding: var(--space-md);
+  background: var(--color-ink);
+  color: var(--color-background);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+.submit-button:hover,
+.submit-button:focus {
+  background: rgba(31, 31, 31, 0.85);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-button:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.form-error {
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: var(--radius-sm);
+  color: #991b1b;
+  font-size: 0.85rem;
+  display: none;
+}
+
+.form-error.is-visible {
+  display: block;
+}
+
+/* =====================
+   TOAST (FEEDBACK)
+   ===================== */
+.toast {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  z-index: 200;
+  background: var(--color-ink);
+  color: var(--color-background);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px var(--color-shadow);
+  opacity: 0;
+  transition: all var(--transition-bounce);
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* =====================
+   RESPONSIVIDADE
+   ===================== */
+@media (max-width: 767px) {
+  :root {
+    --space-lg: 1rem;
+    --space-xl: 1.5rem;
+    --space-xxl: 2rem;
+  }
+
+  .cta-content {
+    padding: var(--space-lg);
+  }
+
+  .modal-header,
+  .modal-form {
+    padding: var(--space-md);
+  }
+}
+
+/* =====================
+   ACESSIBILIDADE
+   ===================== */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.floating-layer):not(.floating-layer *),
+  *:not(.floating-layer):not(.floating-layer *)::before,
+  *:not(.floating-layer):not(.floating-layer *)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =====================
+   SCROLL SUAVE
+   ===================== */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
